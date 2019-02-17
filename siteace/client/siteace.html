@@ -1,0 +1,165 @@
+﻿<head>
+    <meta charset="utf-8">
+    <title>siteace</title>
+</head>
+<body>
+</body>
+
+<template name="ApplicationLayout">
+    {{> yield "navbar"}}
+    {{> yield "main"}}
+</template>
+
+<template name="navbar">
+    <!-- navbar  - you will be putting the login functions here -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">
+                    Site Ace
+                </a>
+                {{> loginButtons}}
+            </div>
+            {{> searchBox}}
+        </div>
+    </nav>
+</template>
+
+<template name="website_form">
+    <a class="btn btn-primary js-toggle-website-form" href="#">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+    </a>
+    <div id="website_form" class="hidden_div">
+        <form class="js-save-website-form">
+            <div class="form-group">
+                <label for="url">Site address</label>
+                <input type="text" class="form-control" id="url" placeholder="http://www.mysite.com">
+            </div>
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" id="title" placeholder="Mysite">
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <input type="text" class="form-control" id="description" placeholder="I found this site really useful for ...">
+            </div>
+            <button type="submit" class="btn btn-success js-save-website-form">Submit</button>
+        </form>
+    </div>
+</template>
+
+<template name="websites">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-6">
+                {{#if currentUser}}
+                {{> website_form}}
+                {{/if}}
+            </div>
+        </div>
+        {{> website_list}}
+    </div>
+</template>
+
+<template name="searchBox">
+    <form class="navbar-form navbar-right js-set-filter">
+        <div class="form-group">
+            <input type="text" class="form-control" id="search" name="search">
+        </div>
+        <button type="submit" class="btn btn-success js-set-filter">Search</button>
+    </form>
+</template>
+
+<!-- template that displays several website items -->
+<template name="website_list">
+    <h2>
+        {{#if filtering}}
+        Showing websites with keywords {{getFilterWords}}. <a href="#" class="js-unset-filter">Show all websites</a>
+        {{/if}}
+    </h2>
+    <ol>
+        {{#each websites}}
+        {{> website_item}}
+        {{/each}}
+    </ol>
+</template>
+
+<!-- template that displays individual website entries -->
+<template name="website_item">
+    <li>
+        <a href="{{url}}">{{title}}</a>
+        <p>
+            {{description}}
+        </p>
+        {{#if currentUser}}
+        <a href="#" class="btn btn-success js-upvote">
+            <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+        </a>
+        <a href="#" class="btn btn-danger js-downvote">
+            <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
+        </a>
+        {{/if}}
+        <a href="/website/{{_id}}" class="btn btn-info js-details">
+            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+        </a>
+        <p>{{upvotes}} upvotes {{downvotes}} downvotes</p>
+        <p>Added on: {{formatDate createdOn}}</p>
+    </li>
+</template>
+
+<!-- template that displays individual website details -->
+<template name="website">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <a href="{{url}}">{{title}}</a>
+                <p>
+                    {{description}}
+                </p>
+                {{#if currentUser}}
+                <a href="#" class="btn btn-success js-upvote">
+                    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+                </a>
+                <a href="#" class="btn btn-danger js-downvote">
+                    <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
+                </a>
+                {{/if}}
+                <p>{{upvotes}} upvotes {{downvotes}} downvotes</p>
+                <p>Added on: {{formatDate createdOn}}</p>
+
+                <a href="/websites">Go back to websites list</a>
+            </div>
+            <div class="col-xs-12">
+                <hr>
+            </div>
+            <div class="row">
+                {{#if currentUser}}
+                <div class="col-xs-12">
+                    <form class="form-inline js-comment-form">
+                        <div class="form-group form-group-sm">
+                            <label for="comment" class="control-label">Comment: </label>
+                            <input type="text" class="form-control" id="comment" name="comment">
+                        </div>
+                        <button type="submit" class="btn btn-success js-comment-form">Submit</button>
+                    </form>
+                </div>
+                {{/if}}
+                <div class="col-xs-12">
+                    <h3>Customer comments</h3>
+                </div>
+                <div class="col-xs-12">
+                    <ul class="list-unstyled">
+                        {{#each comments}}
+                        <li>
+                            <blockquote>
+                                <p>{{text}}</p>
+                                <footer>{{author}}, {{formatDate createdOn}}</footer>
+                            </blockquote>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
